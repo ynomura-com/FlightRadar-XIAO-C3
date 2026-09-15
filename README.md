@@ -1,6 +1,7 @@
-# ESP32-C3 Super Mini + GC9A01 Flight Radar
+# Seeed Studio XIAO ESP32S3 + GC9A01 Flight Radar
 
-タッチパネルの無い丸型ディスプレイ(GC9A01, 240x240)向けの版です。M5Stack CoreS3/Core2版とは異なり、タップでの選択はできないため、**範囲内の全機体について常に**次の3つを表示します。
+タッチパネルの無い丸型ディスプレイ(GC9A01, 240x240)向けの版です。
+、**範囲内の全機体について常に**次の3つを表示します。
 
 - ドット(機体位置)
 - ドットから伸びる短い線(OpenSkyの`true_track`=進行方向)
@@ -8,45 +9,37 @@
 
 ## ハードウェア
 
-- コントローラ: ESP32-C3 Super Mini
+- コントローラ: Seeed Studio XIAO ESP32S3
 - ディスプレイ: 1.28インチ丸型 GC9A01 (240x240, SPI)
 
 ### 配線
 
-| GC9A01 | ESP32-C3 Super Mini |
+| GC9A01 | Seeed Studio XIAO ESP32S3|
 | --- | --- |
 | VCC | 3V3 |
 | GND | GND |
-| SCL / SCK | GPIO4 |
-| SDA / MOSI | GPIO6 |
-| CS | GPIO7 |
-| DC | GPIO2 |
-| RST | GPIO3 |
+| SCL / SCK | D8 |
+| SDA / MOSI | D10 |
+| CS | D0 |
+| DC | D1 |
+| RST | D2 |
 
 ※ バックライト(BL)制御ピンが別に出ているモジュールの場合、配線表に含まれていなかったため、常時点灯前提にしています。もし個別制御が必要であれば教えてください。
 
 ## ライブラリ
 
-M5Unifiedが使えない汎用ESP32-C3のため、ディスプレイ制御には **TFT_eSPI** を使用しています。`platformio.ini`内の`build_flags`で`USER_SETUP_LOADED`方式の設定(ピン配置・GC9A01ドライバ指定)を完結させているので、TFT_eSPI付属の`User_Setup.h`を編集する必要はありません。
+LovyanGFXの素のLGFX_Deviceサブクラスを自分で定義して、GC9A01用のSPIピン設定(CS/DC/RST/SCLK/MOSI)を書きます。
 
 ## セットアップ
 
 1. VSCode + PlatformIOで本フォルダを開く
-2. `include/secrets.h` を編集(WiFi・OpenSkyのclient_id/secret・自宅緯度経度)
-   - 他機種で既にOpenSkyの認証情報を取得済みであれば、そのまま使い回せます
-3. ビルド&アップロード
+2. ビルド&アップロード
 
 ```
 pio run -t upload
 pio device monitor
-```
+```](
 
-## 注意点・簡略化している点
-
-- **ESP32-C3はシングルコア**のため、WiFi/API通信タスクはコア固定せず生成しています(CoreS3/Core2版はデュアルコアでCore0に固定していました)
-- タッチが無いため、CoreS3/Core2版にあった「タップして目的地(空港コード)を表示」機能は搭載していません。範囲内の全機体に便名ラベルを常時表示する分、機体が多いと画面が窮屈になる可能性があります(必要であれば表示数の上限や優先順位付けを調整できます)
-- 画面が丸いため、レーダー半径は少し内側(`RADAR_R_PX = 108px`)に設定し、外周ぎりぎりでの描画欠けを防いでいます
-- ラベルはドットの右上に固定オフセットで表示しているだけなので、機体同士が近いとラベルが重なることがあります
-- メモリに余裕が少ないため、画面バッファ(スプライト)は8bitカラーで確保しています(見た目上の色数は少し減りますが、動作の安定性を優先しました)
-- 画面の向きがおかしい場合は `src/main.cpp` の `tft.setRotation(0);` を0〜3で調整してください
-- TLS証明書検証は`setInsecure()`で省略した簡易実装です(他機種版と同様)
+## 注意点
+元になったのは、[Micro Radar]([https://abidcg.blogspot.com/2026/07/micro-radar-web-flasher.html](https://github.com/AnthonySturdy/micro-radar)} で、ライセンスは 
+MIT ライセンスなので、それを踏襲します。
