@@ -38,8 +38,7 @@ LovyanGFXの素のLGFX_Deviceサブクラスを自分で定義して、GC9A01用
 ```
 pio run -t upload
 pio device monitor
-```](
+```
 
 ## 注意点
-元になったのは、[Micro Radar]([https://abidcg.blogspot.com/2026/07/micro-radar-web-flasher.html](https://github.com/AnthonySturdy/micro-radar)} で、ライセンスは 
-MIT ライセンスなので、それを踏襲します。
+元になったのは、[Micro Radar](https://github.com/AnthonySturdy/micro-radar) で、ライセンスは MIT ライセンスなので、それを踏襲します。
